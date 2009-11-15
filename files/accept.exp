@@ -1,0 +1,7 @@
+# Expect script to be run with a hdiutil mount command.
+# Will accept the license agreement automatically.
+expect {
+    "Agree " {send "y\n"}
+    "plist" {}
+}
+expect eof
