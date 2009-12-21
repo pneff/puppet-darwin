@@ -101,7 +101,7 @@ Puppet::Type.type(:package).provide :pkgzip, :parent => Puppet::Provider::Packag
                 files = extract cached_source, dir, extract_type
                 files.each do |file|
                     relfile = file[dir.length..-1]
-                    if not relfile.nil? and relfile.chomp('/') =~ f =~ /\.m{0,1}pkg$/i
+                    if not relfile.nil? and relfile.chomp('/') =~ /\.m{0,1}pkg$/i
                         installpkg(file, name, source)
                     end
                 end
