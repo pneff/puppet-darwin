@@ -16,6 +16,7 @@ Puppet::Type.type(:package).provide :pkgzip, :parent => Puppet::Provider::Packag
     commands :installer => "/usr/sbin/installer"
     commands :hdiutil => "/usr/bin/hdiutil"
     commands :curl => "/usr/bin/curl"
+    commands :unzip => "/usr/bin/unzip"
 
     # JJM We store a cookie for each installed .pkg.zip in /var/db
     def self.instance_by_name
