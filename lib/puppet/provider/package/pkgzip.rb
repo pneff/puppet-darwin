@@ -12,7 +12,6 @@ Puppet::Type.type(:package).provide :pkgzip, :parent => Puppet::Provider::Packag
     desc "Package management based on Apple's Installer.app and DiskUtility.app.  This package works by checking the contents of a DMG image for Apple pkg or mpkg files. Any number of pkg or mpkg files may exist in the root directory of the DMG file system. Sub directories are not checked for packages.  See `the wiki docs </trac/puppet/wiki/DmgPackages>` for more detail."
 
     confine :operatingsystem => :darwin
-    defaultfor :operatingsystem => :darwin
     commands :installer => "/usr/sbin/installer"
     commands :hdiutil => "/usr/bin/hdiutil"
     commands :curl => "/usr/bin/curl"
