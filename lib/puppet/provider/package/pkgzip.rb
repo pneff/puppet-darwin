@@ -87,6 +87,7 @@ Puppet::Type.type(:package).provide :pkgzip, :parent => Puppet::Provider::Packag
         cached_source = source
         if %r{\A[A-Za-z][A-Za-z0-9+\-\.]*://} =~ cached_source
             cached_source = "/tmp/#{name}"
+            cached_source += ".pkg" if extract_type == :none
             begin
                 curl "-o", cached_source, "-C", "-", "-k", "-s", "--url", source
                 Puppet.debug "Success: curl transfered [#{name}]"
@@ -100,14 +101,14 @@ Puppet::Type.type(:package).provide :pkgzip, :parent => Puppet::Provider::Packag
             Dir.mktmpdir do |dir|
                 dir += '/' unless dir[-1..-1] == '/'
                 if extract_type == :none
-                    files = [cached_source]
+                    installpkg(cached_source, name, source)
                 else
                     files = extract cached_source, dir, extract_type
-                end
-                files.each do |file|
-                    relfile = file[dir.length..-1]
-                    if not relfile.nil? and relfile.chomp('/') =~ /\.m{0,1}pkg$/i
-                        installpkg(file, name, source)
+                    files.each do |file|
+                        relfile = file[dir.length..-1]
+                        if not relfile.nil? and relfile.chomp('/') =~ /\.m{0,1}pkg$/i
+                            installpkg(file, name, source)
+                        end
                     end
                 end
             end
