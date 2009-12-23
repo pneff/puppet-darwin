@@ -77,6 +77,8 @@ Puppet::Type.type(:package).provide :pkgzip, :parent => Puppet::Provider::Packag
             extract_type = :targz
         elsif source =~ /\.tbz$/i
             extract_type = :targz
+        elsif source =~ /\.pkg$/i
+            extract_type = :none
         else
             self.fail "Source must end in .zip"
         end
@@ -97,7 +99,11 @@ Puppet::Type.type(:package).provide :pkgzip, :parent => Puppet::Provider::Packag
         begin
             Dir.mktmpdir do |dir|
                 dir += '/' unless dir[-1..-1] == '/'
-                files = extract cached_source, dir, extract_type
+                if extract_type == :none
+                    files = [cached_source]
+                else
+                    files = extract cached_source, dir, extract_type
+                end
                 files.each do |file|
                     relfile = file[dir.length..-1]
                     if not relfile.nil? and relfile.chomp('/') =~ /\.m{0,1}pkg$/i
