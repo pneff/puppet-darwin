@@ -93,7 +93,9 @@ Puppet::Type.type(:package).provide(:appzip, :parent => Puppet::Provider::Packag
                 files.each do |file|
                     relfile = file[dir.length..-1]
                     if not relfile.nil? and relfile.chomp('/')[-4..-1] == '.app'
-                        installapp(file, name, source)
+                        if s.scan("\.app").size == 1 # Avoids .app within .app
+                            installapp(file, name, source)
+                        end
                     end
                 end
             end
