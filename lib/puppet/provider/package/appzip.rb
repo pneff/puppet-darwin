@@ -11,7 +11,7 @@ Puppet::Type.type(:package).provide(:appzip, :parent => Puppet::Provider::Packag
     desc "Package management which copies application bundles to a target."
 
     confine :operatingsystem => :darwin
-    
+
     commands :unzip => "/usr/bin/unzip"
     commands :tar => "/usr/bin/tar"
     commands :curl => "/usr/bin/curl"
@@ -93,7 +93,7 @@ Puppet::Type.type(:package).provide(:appzip, :parent => Puppet::Provider::Packag
                 files.each do |file|
                     relfile = file[dir.length..-1]
                     if not relfile.nil? and relfile.chomp('/')[-4..-1] == '.app'
-                        if s.scan("\.app").size == 1 # Avoids .app within .app
+                        if relfile.scan("\.app").size == 1 # Avoids .app within .app
                             installapp(file, name, source)
                         end
                     end
