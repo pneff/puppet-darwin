@@ -21,7 +21,7 @@ class darwin {
     modules_dir { "darwin": }
     modules_file {
       "darwin/accept.exp":
-        source => "puppet:///darwin/accept.exp",
+        source => "puppet:///modules/darwin/accept.exp",
         group => 0;
     }
 }
