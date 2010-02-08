@@ -23,7 +23,7 @@ Puppet::Type.type(:package).provide(:appdmg, :parent => Puppet::Provider::Packag
     desc "Package management which copies application bundles to a target."
 
     confine :operatingsystem => :darwin
-    
+
     commands :hdiutil => "/usr/bin/hdiutil"
     commands :curl => "/usr/bin/curl"
     commands :ditto => "/usr/bin/ditto"
@@ -48,7 +48,11 @@ Puppet::Type.type(:package).provide(:appdmg, :parent => Puppet::Provider::Packag
 
     def self.installapp(source, name, orig_source)
       appname = File.basename(source);
-      ditto "--rsrc", source, "/Applications/#{appname}"
+      target = "/Applications/#{appname}"
+      if File.exists?(target)
+        FileUtils.rm_rf(target)
+      end
+      ditto "--rsrc", source, target
       File.open("/var/db/.puppet_appdmg_installed_#{name}", "w") do |t|
           t.print "name: '#{name}'\n"
           t.print "source: '#{orig_source}'\n"
