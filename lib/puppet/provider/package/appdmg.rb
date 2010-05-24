@@ -79,28 +79,23 @@ Puppet::Type.type(:package).provide(:appdmg, :parent => Puppet::Provider::Packag
 
         begin
             open(cached_source) do |dmg|
-                # xml_str = hdiutil "mount", "-plist", "-nobrowse", "-readonly", "-mountrandom", "/tmp", dmg.path
-                # print hdiutil, "mount", "-plist", "-nobrowse", "-readonly", "-mountrandom", "/tmp", dmg.path
-                # puts "-f", "/var/lib/puppet/modules/darwin/accept.exp", "-c", "spawn /usr/bin/hdiutil mount -plist -nobrowse -readonly -mountrandom /tmp #{dmg.path}"
                 xml_str = expect "-f", "/var/lib/puppet/modules/darwin/accept.exp", "-c", "set env(PAGER) cat", "-c", "spawn /usr/bin/hdiutil mount -plist -nobrowse -readonly -mountrandom /tmp #{dmg.path}"
-                # puts xml_str
-                # puts "!!!"
-                    ptable = Plist::parse_xml xml_str
-                    # JJM Filter out all mount-paths into a single array, discard the rest.
-                    mounts = ptable['system-entities'].collect { |entity|
-                        entity['mount-point']
-                    }.select { |mountloc|; mountloc }
-                    begin
-                        mounts.each do |fspath|
-                            Dir.entries(fspath).select { |f|
-                                f =~ /\.app$/i
-                            }.each do |pkg|
-                                installapp("#{fspath}/#{pkg}", name, source)
-                            end
-                        end # mounts.each do
-                    ensure
-                        hdiutil "eject", mounts[0]
-                    end # begin
+                ptable = Plist::parse_xml xml_str
+                # JJM Filter out all mount-paths into a single array, discard the rest.
+                mounts = ptable['system-entities'].collect { |entity|
+                    entity['mount-point']
+                }.select { |mountloc|; mountloc }
+                begin
+                    mounts.each do |fspath|
+                        Dir.entries(fspath).select { |f|
+                            f =~ /\.app$/i
+                        }.each do |pkg|
+                            installapp("#{fspath}/#{pkg}", name, source)
+                        end
+                    end # mounts.each do
+                ensure
+                    hdiutil "eject", mounts[0]
+                end # begin
             end # open() do
         ensure
             # JJM Remove the file if open-uri didn't already do so.
